@@ -4,8 +4,15 @@
 
 # classes that may appear unused but we know are in use
 KNOWN_IN_USE=$(cat <<END
+box
+browse-profile-hai
+browse-profile-pa
+browser-type-chrome
 browser-type-msie
+browser-type-safari
 browser-version-7
+browser-version-8
+browser-version-9
 confirm-dialog-box
 dialog-box-n
 edit-profile-field-empty
@@ -19,12 +26,14 @@ frame-message-sender
 frame-modal-bulk-gift-sender
 no-close
 reg-modals
+star
 step_2
 step_3
 step_4
 step_5
 success_profile_saved
 tip
+ui-dialog
 END
 )
 
