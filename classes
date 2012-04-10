@@ -60,7 +60,7 @@ function extractClasses() {
 CSS_FILES=$(find . -name '*.css' | grep -v '3rdparty\|jquery\|simpletest')
 echo "$CSS_FILES" | while read LINE; do
 	cat "$LINE" | extractClasses | while read CLASS; do
-		if [ -z $(findUsage "$CLASS") ]; then
+		if [ -z "$(findUsage "$CLASS")" ]; then
 			echo -e "++ $LINE\n$CLASS"
 		fi
 	done
@@ -79,7 +79,7 @@ function extractInlineCss() {
 
 echo "$INLINE_CSS_FILES" | while read LINE; do
 	cat "$LINE" | extractInlineCss | extractClasses | while read CLASS; do
-		if [ -z $(findUsage "$CLASS") ]; then
+		if [ -z "$(findUsage "$CLASS")" ]; then
 			echo -e "++ $LINE\n$CLASS"
 		fi
 	done
