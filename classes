@@ -8,7 +8,9 @@ browser-type-msie
 browser-version-7
 confirm-dialog-box
 dialog-box-n
+edit-profile-field-empty
 error_profile_saved
+fb-size-r
 frame-bulk-gift-sender
 frame-gift-preview
 frame-gift-sender
@@ -16,7 +18,13 @@ frame-message-response-dialog
 frame-message-sender
 frame-modal-bulk-gift-sender
 no-close
+reg-modals
+step_2
+step_3
+step_4
+step_5
 success_profile_saved
+tip
 END
 )
 
