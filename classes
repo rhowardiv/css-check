@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# Output classnames that may be unused
+
+# classes that may appear unused but we know are in use
+KNOWN_IN_USE=$(cat <<END
+browser-type-msie
+browser-version-7
+confirm-dialog-box
+dialog-box-n
+error_profile_saved
+frame-bulk-gift-sender
+frame-gift-preview
+frame-gift-sender
+frame-message-response-dialog
+frame-message-sender
+frame-modal-bulk-gift-sender
+no-close
+success_profile_saved
+END
+)
+
+HTML_USING_CLASSES=$(ack -o --no-filename '\bclass\s*=\s*("[^"]+"|'\''[^'\'']+'\'')' \
+	| sed 's/class=//' | sed 's/"//g' | sed "s/'//g" \
+	| sed 's/\s\+/\n/g' \
+	| sort -u \
+	| grep -v '^[^_a-zA-Z]'\
+)
+#echo "Found $(echo "$HTML_USING_CLASSES" | wc -l) classnames in HTML."
+
+JS_USING_CLASSES=$(\
+	ack -o --no-filename '\b(add|remove|toggle)Class\(.+\)' \
+	| sed 's/\(Class([^)]\+)\)/\n\1/g' \
+	| grep '^Class(' \
+	| sed 's/^Class(\([^)]\+\)).*$/\1/' \
+	| grep '^".\+"$\|^'\''.\+'\''$' \
+	| sed 's/^.\(.\+\).$/\1/' \
+	| grep -v '"\|'\' \
+	| sed 's/\s\+/\n/g' \
+	| sort -u
+)
+#echo "Found $(echo "$JS_USING_CLASSES" | wc -l) classnames in JS."
+
+USING_CLASSES=$(echo "$KNOWN_IN_USE$HTML_USING_CLASSES$JS_USING_CLASSES" | sort -u)
+#echo "Intersection is $(echo "$USING_CLASSES" | wc -l) classnames."
+
+function findUsage() {
+	echo "$USING_CLASSES" | grep "^$1$"
+}
+
+function extractClasses() {
+	grep '\.[_a-zA-Z]' \
+		| sed 's/\./\n./g' \
+		| grep '^\.' \
+		| grep -v '^\.\($\|[^a-zA-Z]\|png\|gif\|jpg\|Microsoft\|AlphaImageLoader\)' \
+		| sed 's/^\.\([-_a-zA-Z0-9]\+\).*$/\1/' \
+		| sort -u
+}
+
+CSS_FILES=$(find . -name '*.css' | grep -v '3rdparty\|jquery\|simpletest')
+echo "$CSS_FILES" | while read LINE; do
+	cat "$LINE" | extractClasses | while read CLASS; do
+		if [ -z $(findUsage "$CLASS") ]; then
+			echo -e "++ $LINE\n$CLASS"
+		fi
+	done
+done
+
+INLINE_CSS_FILES=$(\
+	find \( -name '*.php' -o -name '*.html' \) -print0 \
+	| xargs -0 grep -c '<style[ >]' \
+	| grep -v '0$' \
+	| sed 's/:[0-9]\+$//'
+)
+
+function extractInlineCss() {
+	sed -n '/<style[ >]/,/<\/style/p'
+}
+
+echo "$INLINE_CSS_FILES" | while read LINE; do
+	cat "$LINE" | extractInlineCss | extractClasses | while read CLASS; do
+		if [ -z $(findUsage "$CLASS") ]; then
+			echo -e "++ $LINE\n$CLASS"
+		fi
+	done
+done
+
+
