@@ -15,6 +15,10 @@ browser-version-8
 browser-version-9
 confirm-dialog-box
 dialog-box-n
+disable-onfile-active-sub
+disable-onfile-sub
+disable-paypal-sub
+disable-vindicia-sub
 edit-profile-field-empty
 error_profile_saved
 fb-size-r
@@ -24,8 +28,12 @@ frame-gift-sender
 frame-message-response-dialog
 frame-message-sender
 frame-modal-bulk-gift-sender
+me-priority
 no-close
+other-priority
+premium-nav
 reg-modals
+smartmatch-off
 star
 step_2
 step_3
